@@ -16,6 +16,42 @@
             background: #f7f7f7;
             color: #333;
         }
+
+        /* 🔐 合言葉ロック画面 */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+            text-align: center;
+        }
+        #lock-screen input {
+            padding: 10px;
+            font-size: 18px;
+            width: 200px;
+            margin-top: 10px;
+        }
+        #lock-screen button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #lock-error {
+            color: red;
+            margin-top: 10px;
+            height: 20px;
+        }
+
+        /* 🔓 本文（解除されるまで非表示） */
+        #content {
+            display: none;
+        }
+
         header {
             background: #4CAF50;
             color: white;
@@ -76,12 +112,22 @@
 </head>
 <body>
 
+<!-- 🔐 合言葉ロック画面 -->
+<div id="lock-screen">
+    <h2>合言葉を入力してください</h2>
+    <input id="password-input" type="text" placeholder="ひらがなで入力">
+    <button onclick="unlock()">OK</button>
+    <div id="lock-error"></div>
+</div>
+
+<!-- 🔓 本文（解除後に表示） -->
+<div id="content">
+
 <header>
     <h1>旅のしおり</h1>
     <p>◯◯旅行｜2025年3月12日〜14日</p>
 </header>
 
-<!-- 🔥 トップスライドショー -->
 <div id="top-slideshow"></div>
 
 <section>
@@ -124,7 +170,6 @@
     <p>チェックイン：15:00</p>
 </section>
 
-<!-- 🔥 写真アップロード -->
 <section>
     <h2>📤 写真アップロード</h2>
     <input type="file" id="upload-file" multiple>
@@ -132,21 +177,34 @@
     <p id="upload-status"></p>
 </section>
 
-<!-- 🔥 ページ最後のグリッド一覧 -->
 <section id="photo-gallery">
     <h2>📸 旅行写真</h2>
     <div class="grid"></div>
 </section>
 
+</div> <!-- /content -->
+
 <script>
+/* 🔐 合言葉ロック */
+function unlock() {
+    const input = document.getElementById("password-input").value.trim();
+    const error = document.getElementById("lock-error");
+
+    if (input === "さんこいち") {
+        document.getElementById("lock-screen").style.display = "none";
+        document.getElementById("content").style.display = "block";
+    } else {
+        error.textContent = "合言葉が違います";
+    }
+}
+
+/* Supabase 初期化 */
 const supabase = supabase.createClient(
     "https://exzwquntgcnnpzqsfwzq.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4endxdW50Z2NubnB6cXNmd3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjAyNjIsImV4cCI6MjA5NTE5NjI2Mn0.qj4al6Ql2zPiu559vWRrzAt9jPnXick6CQkMIj9sTTk"
 );
 
-// ------------------------------
-// 写真一覧取得（signed URL）
-// ------------------------------
+/* 写真一覧取得 */
 async function loadPhotos() {
     const { data, error } = await supabase.storage.from("photos").list("", {
         limit: 100,
@@ -170,9 +228,7 @@ async function loadPhotos() {
     setupGrid(urls);
 }
 
-// ------------------------------
-// トップスライドショー
-// ------------------------------
+/* スライドショー */
 function setupTopSlideshow(urls) {
     const box = document.getElementById("top-slideshow");
     box.innerHTML = "";
@@ -195,9 +251,7 @@ function setupTopSlideshow(urls) {
     }, 2500);
 }
 
-// ------------------------------
-// グリッド一覧
-// ------------------------------
+/* グリッド一覧 */
 function setupGrid(urls) {
     const grid = document.querySelector("#photo-gallery .grid");
     grid.innerHTML = "";
@@ -209,9 +263,7 @@ function setupGrid(urls) {
     });
 }
 
-// ------------------------------
-// 複数ファイルアップロード（安全ファイル名）
-// ------------------------------
+/* アップロード */
 document.getElementById("upload-btn").onclick = async () => {
     const files = document.getElementById("upload-file").files;
     if (!files.length) return;
@@ -233,14 +285,12 @@ document.getElementById("upload-btn").onclick = async () => {
     loadPhotos();
 };
 
-// ------------------------------
-// シャッフル関数
-// ------------------------------
+/* シャッフル */
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// 初期ロード
+/* 初期ロード（合言葉解除後に実行される） */
 loadPhotos();
 </script>
 
