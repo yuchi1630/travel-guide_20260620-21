@@ -217,7 +217,7 @@ async function loadPhotos() {
 
     const urls = await Promise.all(
         files.map(async f => {
-            const { data } = await supabase.storage
+            const { data } = await sb.storage
                 .from("photos")
                 .createSignedUrl(f.name, 60 * 60 * 24);
             return data.signedUrl;
