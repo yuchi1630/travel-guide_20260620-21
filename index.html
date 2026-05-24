@@ -72,11 +72,6 @@
             border-radius: 8px;
             object-fit: cover;
         }
-
-        /* アップロードボタン */
-        #upload-area {
-            margin-top: 15px;
-        }
     </style>
 </head>
 <body>
@@ -132,7 +127,7 @@
 <!-- 🔥 写真アップロード -->
 <section>
     <h2>📤 写真アップロード</h2>
-    <input type="file" id="upload-file">
+    <input type="file" id="upload-file" multiple>
     <button id="upload-btn">アップロード</button>
     <p id="upload-status"></p>
 </section>
@@ -150,7 +145,7 @@ const supabase = supabase.createClient(
 );
 
 // ------------------------------
-// 写真一覧取得
+// 写真一覧取得（signed URL）
 // ------------------------------
 async function loadPhotos() {
     const { data, error } = await supabase.storage.from("photos").list("", {
@@ -162,9 +157,14 @@ async function loadPhotos() {
 
     const files = data.filter(f => f.name !== ".emptyFolderPlaceholder");
 
-    // URL生成
-    const urls = files.map(f =>
-        supabase.storage.from("photos").getPublicUrl(f.name).data.publicUrl
+    // signed URL を生成（24時間有効）
+    const urls = await Promise.all(
+        files.map(async f => {
+            const { data } = await supabase.storage
+                .from("photos")
+                .createSignedUrl(f.name, 60 * 60 * 24);
+            return data.signedUrl;
+        })
     );
 
     setupTopSlideshow(urls);
@@ -211,20 +211,24 @@ function setupGrid(urls) {
 }
 
 // ------------------------------
-// アップロード
+// 複数ファイルアップロード
 // ------------------------------
 document.getElementById("upload-btn").onclick = async () => {
-    const file = document.getElementById("upload-file").files[0];
-    if (!file) return;
+    const files = document.getElementById("upload-file").files;
+    if (!files.length) return;
 
-    const fileName = `${Date.now()}_${file.name}`;
+    let successCount = 0;
 
-    const { error } = await supabase.storage.from("photos").upload(fileName, file);
+    for (const file of files) {
+        const fileName = `${Date.now()}_${file.name}`;
+        const { error } = await supabase.storage.from("photos").upload(fileName, file);
+        if (!error) successCount++;
+    }
 
     document.getElementById("upload-status").textContent =
-        error ? "アップロード失敗…" : "アップロード成功！";
+        `${successCount}枚アップロード成功！`;
 
-    if (!error) loadPhotos();
+    loadPhotos();
 };
 
 // ------------------------------
