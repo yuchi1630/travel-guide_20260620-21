@@ -211,7 +211,7 @@ function setupGrid(urls) {
 }
 
 // ------------------------------
-// 複数ファイルアップロード
+// 複数ファイルアップロード（安全ファイル名）
 // ------------------------------
 document.getElementById("upload-btn").onclick = async () => {
     const files = document.getElementById("upload-file").files;
@@ -220,8 +220,12 @@ document.getElementById("upload-btn").onclick = async () => {
     let successCount = 0;
 
     for (const file of files) {
-        const fileName = `${Date.now()}_${file.name}`;
-        const { error } = await supabase.storage.from("photos").upload(fileName, file);
+        // 日本語・絵文字対策：安全な英数字ファイル名に変換
+        const ext = file.name.split('.').pop();
+        const safeName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+
+        const { error } = await supabase.storage.from("photos").upload(safeName, file);
+
         if (!error) successCount++;
     }
 
