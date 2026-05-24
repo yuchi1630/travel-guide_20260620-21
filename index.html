@@ -206,7 +206,7 @@ const sb = supabase.createClient(
 
 /* 写真一覧取得 */
 async function loadPhotos() {
-    const { data, error } = await supabase.storage.from("photos").list("", {
+    const { data, error } = await sb.storage.from("photos").list("", {
         limit: 100,
         sortBy: { column: "name", order: "asc" }
     });
@@ -274,7 +274,7 @@ document.getElementById("upload-btn").onclick = async () => {
         const ext = file.name.split('.').pop();
         const safeName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
-        const { error } = await supabase.storage.from("photos").upload(safeName, file);
+        const { error } = await sb.storage.from("photos").upload(safeName, file);
 
         if (!error) successCount++;
     }
