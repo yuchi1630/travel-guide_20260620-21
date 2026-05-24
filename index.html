@@ -193,6 +193,7 @@ function unlock() {
     if (input === "さんこいち") {
         document.getElementById("lock-screen").style.display = "none";
         document.getElementById("content").style.display = "block";
+        loadPhotos(); // ← ここで写真を読み込む
     } else {
         error.textContent = "合言葉が違います";
     }
@@ -200,8 +201,8 @@ function unlock() {
 
 /* Supabase 初期化 */
 const sb = supabase.createClient(
-    "https://exzwquntgcnnpzqsfwzq.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4endxdW50Z2NubnB6cXNmd3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjAyNjIsImV4cCI6MjA5NTE5NjI2Mn0.qj4al6Ql2zPiu559vWRrzAt9jPnXic[...]"
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_KEY
 );
 
 /* 写真一覧取得 */
@@ -289,9 +290,6 @@ document.getElementById("upload-btn").onclick = async () => {
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
-
-/* 初期ロード（合言葉解除後に実行される） */
-loadPhotos();
 </script>
 
 </body>
