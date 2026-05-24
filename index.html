@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>旅のしおり</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         body {
             font-family: "Helvetica", "Yu Gothic", sans-serif;
@@ -39,6 +43,40 @@
         a {
             color: #4CAF50;
         }
+
+        /* トップスライドショー */
+        #top-slideshow {
+            width: 100%;
+            height: 250px;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+        #top-slideshow img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        /* グリッド一覧 */
+        #photo-gallery .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        #photo-gallery img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* アップロードボタン */
+        #upload-area {
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -47,6 +85,9 @@
     <h1>旅のしおり</h1>
     <p>◯◯旅行｜2025年3月12日〜14日</p>
 </header>
+
+<!-- 🔥 トップスライドショー -->
+<div id="top-slideshow"></div>
 
 <section>
     <h2>📅 日程</h2>
@@ -87,6 +128,115 @@
     <p>住所：東京都◯◯区◯◯</p>
     <p>チェックイン：15:00</p>
 </section>
+
+<!-- 🔥 写真アップロード -->
+<section>
+    <h2>📤 写真アップロード</h2>
+    <input type="file" id="upload-file">
+    <button id="upload-btn">アップロード</button>
+    <p id="upload-status"></p>
+</section>
+
+<!-- 🔥 ページ最後のグリッド一覧 -->
+<section id="photo-gallery">
+    <h2>📸 旅行写真</h2>
+    <div class="grid"></div>
+</section>
+
+<script>
+const supabase = supabase.createClient(
+    "https://exzwquntgcnnpzqsfwzq.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4endxdW50Z2NubnB6cXNmd3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjAyNjIsImV4cCI6MjA5NTE5NjI2Mn0.qj4al6Ql2zPiu559vWRrzAt9jPnXick6CQkMIj9sTTk"
+);
+
+// ------------------------------
+// 写真一覧取得
+// ------------------------------
+async function loadPhotos() {
+    const { data, error } = await supabase.storage.from("photos").list("", {
+        limit: 100,
+        sortBy: { column: "name", order: "asc" }
+    });
+
+    if (error) return;
+
+    const files = data.filter(f => f.name !== ".emptyFolderPlaceholder");
+
+    // URL生成
+    const urls = files.map(f =>
+        supabase.storage.from("photos").getPublicUrl(f.name).data.publicUrl
+    );
+
+    setupTopSlideshow(urls);
+    setupGrid(urls);
+}
+
+// ------------------------------
+// トップスライドショー
+// ------------------------------
+function setupTopSlideshow(urls) {
+    const box = document.getElementById("top-slideshow");
+    box.innerHTML = "";
+
+    urls = shuffle(urls);
+
+    urls.forEach((url, i) => {
+        const img = document.createElement("img");
+        img.src = url;
+        if (i === 0) img.style.opacity = 1;
+        box.appendChild(img);
+    });
+
+    let index = 0;
+    setInterval(() => {
+        const imgs = box.querySelectorAll("img");
+        imgs.forEach(img => img.style.opacity = 0);
+        index = (index + 1) % imgs.length;
+        imgs[index].style.opacity = 1;
+    }, 2500);
+}
+
+// ------------------------------
+// グリッド一覧
+// ------------------------------
+function setupGrid(urls) {
+    const grid = document.querySelector("#photo-gallery .grid");
+    grid.innerHTML = "";
+
+    urls.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        grid.appendChild(img);
+    });
+}
+
+// ------------------------------
+// アップロード
+// ------------------------------
+document.getElementById("upload-btn").onclick = async () => {
+    const file = document.getElementById("upload-file").files[0];
+    if (!file) return;
+
+    const fileName = `${Date.now()}_${file.name}`;
+
+    const { error } = await supabase.storage.from("photos").upload(fileName, file);
+
+    document.getElementById("upload-status").textContent =
+        error ? "アップロード失敗…" : "アップロード成功！";
+
+    if (!error) loadPhotos();
+};
+
+// ------------------------------
+// シャッフル関数
+// ------------------------------
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// 初期ロード
+loadPhotos();
+</script>
 
 </body>
 </html>
