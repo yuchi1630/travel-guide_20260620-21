@@ -140,7 +140,7 @@
 
 <script>
 const supabase = supabase.createClient(
-  "https://exzwquntgcnnpzqsfwzq.supabase.co",
+    "https://exzwquntgcnnpzqsfwzq.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4endxdW50Z2NubnB6cXNmd3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjAyNjIsImV4cCI6MjA5NTE5NjI2Mn0.qj4al6Ql2zPiu559vWRrzAt9jPnXick6CQkMIj9sTTk"
 );
 
@@ -157,7 +157,6 @@ async function loadPhotos() {
 
     const files = data.filter(f => f.name !== ".emptyFolderPlaceholder");
 
-    // signed URL を生成（24時間有効）
     const urls = await Promise.all(
         files.map(async f => {
             const { data } = await supabase.storage
@@ -220,7 +219,6 @@ document.getElementById("upload-btn").onclick = async () => {
     let successCount = 0;
 
     for (const file of files) {
-        // 日本語・絵文字対策：安全な英数字ファイル名に変換
         const ext = file.name.split('.').pop();
         const safeName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
