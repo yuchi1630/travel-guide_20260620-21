@@ -131,16 +131,116 @@
 <div id="bg1" class="bg-layer"></div>
 <div id="bg2" class="bg-layer"></div>
 
-<!-- パスワードロック（旅行っぽいデザイン） -->
+<!-- パスワードロック（大人の搭乗券風デザイン） -->
 <div id="lock-screen">
-    <div class="lock-box">
-        <div class="plane-icon">✈️</div>
-        <h2>チェックイン</h2>
-        <p>合言葉を入力して旅をはじめよう</p>
-        <input type="text" id="pass" placeholder="さんこいち">
-        <button onclick="unlock()">出発する</button>
+    <div class="lock-card">
+        <div class="card-header">BOARDING PASS</div>
+
+        <div class="card-body">
+            <div class="label">BOARDING CODE</div>
+            <input type="text" id="pass" placeholder="さんこいち">
+
+            <button onclick="unlock()">CHECK IN</button>
+        </div>
+
+        <div class="card-footer">
+            TOKYO → SHINJUKU  
+            <span class="date">2026.06.20-21</span>
+        </div>
     </div>
 </div>
+
+<style>
+    #lock-screen {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .lock-card {
+        width: 85%;
+        max-width: 360px;
+        background: rgba(255,255,255,0.75);
+        border-radius: 18px;
+        padding: 25px 22px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border: 1px solid rgba(0,0,0,0.08);
+        animation: fadeIn 0.5s ease;
+        font-family: "Helvetica Neue", sans-serif;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        color: #444;
+        border-bottom: 1px dashed #bbb;
+        padding-bottom: 8px;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .label {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        color: #666;
+        margin-bottom: 6px;
+    }
+
+    #lock-screen input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        margin-bottom: 18px;
+        text-align: center;
+        outline: none;
+        background: rgba(255,255,255,0.9);
+    }
+
+    #lock-screen button {
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
+        border-radius: 10px;
+        border: none;
+        background: #d8a7b1;
+        color: #fff;
+        cursor: pointer;
+        letter-spacing: 1px;
+        transition: 0.2s;
+    }
+
+    #lock-screen button:hover {
+        background: #c48d9a;
+    }
+
+    .card-footer {
+        margin-top: 20px;
+        font-size: 0.8rem;
+        color: #555;
+        text-align: center;
+        border-top: 1px dashed #bbb;
+        padding-top: 10px;
+    }
+
+    .card-footer .date {
+        display: block;
+        font-size: 0.75rem;
+        margin-top: 4px;
+        color: #777;
+    }
+</style>
 
 <script>
 function unlock() {
@@ -148,10 +248,11 @@ function unlock() {
     if (p === "さんこいち") {
         document.getElementById("lock-screen").style.display = "none";
     } else {
-        alert("合言葉がちがうよ！");
+        alert("BOARDING CODE ERROR");
     }
 }
 </script>
+
 
 <!-- 本編 -->
 
