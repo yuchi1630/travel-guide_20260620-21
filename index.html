@@ -1,210 +1,152 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>旅のしおり（安全版）</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>さんこいち旅行 2026/06/20-21</title>
 
-    <style>
-        body {
-            font-family: "Helvetica", "Yu Gothic", sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f2f4f8;
-            color: #333;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: sans-serif;
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 0.8s ease-in-out;
+        color: #fff;
+    }
 
-        /* 🔐 ロック画面 */
-        #lock-screen {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #a8edea, #fed6e3);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
-        }
-        #lock-box {
-            background: white;
-            padding: 30px 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            width: 280px;
-        }
-        #lock-screen input {
-            padding: 12px;
-            font-size: 18px;
-            width: 100%;
-            margin-top: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-        #lock-screen button {
-            margin-top: 15px;
-            padding: 12px;
-            width: 100%;
-            font-size: 16px;
-            background: #4CAF50;
-            : white;
-            border: none;
-            border-radius: 8px;
-        }
-        #lock-error {
-            : red;
-            margin-top: 10px;
-            height: 20px;
-        }
+    /* パスワード画面 */
+    #lock-screen {
+        position: fixed;
+        inset: 0;
+        background: #111;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    #lock-screen input {
+        padding: 10px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        margin-top: 10px;
+        text-align: center;
+    }
+    #lock-screen button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        background: #4caf50;
+        color: #fff;
+    }
 
-        /* 🔓 本文 */
-        #content {
-            display: none;
-            animation: fadeIn 0.8s ease;
-        }
+    /* セクション */
+    section {
+        min-height: 100vh;
+        padding: 60px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        backdrop-filter: brightness(0.75);
+    }
 
-        /* ヒーロー画像 */
-        .hero {
-            height: 220px;
-            background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=60") center/cover no-repeat;
-            position: relative;
-        }
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.35);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            : white;
-            font-size: 28px;
-            font-weight: bold;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-        }
+    h2 {
+        margin-bottom: 20px;
+        font-size: 2rem;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
 
-        header {
-            text-align: center;
-            padding: 20px;
-            background: white;
-        }
-
-        section {
-            padding: 20px;
-            background: white;
-            margin: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            border-left: 5px solid #4CAF50;
-            padding-left: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        .day {
-            font-weight: bold;
-            margin-top: 10px;
-            font-size: 17px;
-        }
-
-        a {
-            : #4CAF50;
-        }
-
-        /* アニメーション */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    .content-box {
+        background: rgba(0,0,0,0.35);
+        padding: 20px;
+        border-radius: 12px;
+        backdrop-filter: blur(4px);
+    }
+</style>
 </head>
+
 <body>
 
-<!-- 🔐 ロック画面 -->
+<!-- パスワードロック -->
 <div id="lock-screen">
-    <div id="lock-box">
-        <h2>🔐 Passcode</h2>
-        <input id="password-input" type="text" placeholder="合言葉を入力">
-        <button onclick="unlock()">OK</button>
-        <div id="lock-error"></div>
-    </div>
+    <h2>パスワードを入力</h2>
+    <input type="password" id="pass" placeholder="ひらがなで入力">
+    <button onclick="unlock()">OK</button>
 </div>
-
-<!-- 🔓 本文 -->
-<div id="content">
-
-<div class="hero">
-    <div class="hero-overlay">旅のしおり</div>
-</div>
-
-<header>
-    <p>◯◯旅行｜2025年3月12日〜14日</p>
-</header>
-
-<section>
-    <h2>📅 日程</h2>
-
-    <div class="day">Day 1（3/12）</div>
-    <ul>
-        <li>10:00 集合</li>
-        <li>12:00 ランチ（<a href="#">お店リンク</a>）</li>
-        <li>15:00 観光スポットA</li>
-    </ul>
-
-    <div class="day">Day 2（3/13）</div>
-    <ul>
-        <li>09:00 ホテル出発</li>
-        <li>11:00 観光スポットB</li>
-        <li>18:00 夕食</li>
-    </ul>
-</section>
-
-<section>
-    <h2>📍 地図リンク</h2>
-    <p><a href="https://maps.google.com" target="_blank">Google Map を開く</a></p>
-</section>
-
-<section>
-    <h2>🎒 持ち物リスト</h2>
-    <ul>
-        <li>財布</li>
-        <li>モバイルバッテリー</li>
-        <li>着替え</li>
-        <li>常備薬</li>
-    </ul>
-</section>
-
-<section>
-    <h2>🏨 宿泊情報</h2>
-    <p>ホテル名：◯◯ホテル</p>
-    <p>住所：東京都◯◯区◯◯</p>
-    <p>チェックイン：15:00</p>
-</section>
-
-</div> <!-- /content -->
 
 <script>
-/* 🔐 合言葉ロック */
 function unlock() {
-    const input = document.getElementById("password-input").value.trim();
-    const error = document.getElementById("lock-error");
-
-    if (input === "さんこいち") {
+    const p = document.getElementById("pass").value;
+    if (p === "さんこいち") {
         document.getElementById("lock-screen").style.display = "none";
-        document.getElementById("content").style.display = "block";
     } else {
-        error.textContent = "おいおい、俺らの合言葉忘れちまったか？";
+        alert("パスワードが違います");
     }
 }
+</script>
+
+<!-- ここから本編 -->
+
+<section>
+    <h2>旅の概要</h2>
+    <div class="content-box">
+        <p>ここに旅の概要が入るよ。</p>
+    </div>
+</section>
+
+<section>
+    <h2>日程</h2>
+    <div class="content-box">
+        <p>ここに日程が入るよ。</p>
+    </div>
+</section>
+
+<section>
+    <h2>持ち物</h2>
+    <div class="content-box">
+        <p>ここに持ち物リストが入るよ。</p>
+    </div>
+</section>
+
+<section>
+    <h2>宿泊情報</h2>
+    <div class="content-box">
+        <p>ここに宿泊情報が入るよ。</p>
+    </div>
+</section>
+
+<!-- 背景切り替えスクリプト -->
+<script>
+    const backgrounds = [
+        "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')", // 海
+        "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470')", // 山
+        "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee')", // 街
+        "url('https://images.unsplash.com/photo-1500048993959-dc65b0c31f52')"  // 夜景
+    ];
+
+    const sections = document.querySelectorAll("section");
+
+    window.addEventListener("scroll", () => {
+        let index = 0;
+
+        sections.forEach((sec, i) => {
+            const rect = sec.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.5) {
+                index = i;
+            }
+        });
+
+        document.body.style.backgroundImage = backgrounds[index];
+    });
+
+    // 初期背景
+    document.body.style.backgroundImage = backgrounds[0];
 </script>
 
 </body>
