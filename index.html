@@ -10,6 +10,7 @@
         margin: 0;
         font-family: sans-serif;
         color: #fff;
+        overflow-x: hidden;
     }
 
     /* 背景レイヤー（クロスフェード用） */
@@ -18,10 +19,11 @@
         inset: 0;
         background-size: cover;
         background-position: center;
-        background-attachment: fixed;
-        transition: opacity 1.2s ease-in-out;
         z-index: -1;
+        transition: opacity 1.2s ease-in-out;
+        will-change: opacity;
     }
+
     #bg1 { opacity: 1; }
     #bg2 { opacity: 0; }
 
