@@ -23,9 +23,82 @@
         transition: opacity 1.2s ease-in-out;
         will-change: opacity;
     }
-
     #bg1 { opacity: 1; }
     #bg2 { opacity: 0; }
+
+    /* パスワード画面（旅行っぽいデザイン） */
+    #lock-screen {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .lock-box {
+        background: #ffffff;
+        padding: 30px 25px;
+        border-radius: 18px;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+        text-align: center;
+        width: 85%;
+        max-width: 340px;
+        animation: pop 0.4s ease;
+        border: 2px dashed #ffb6c1;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .plane-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+        color: #ff6f91;
+    }
+
+    #lock-screen h2 {
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 1.4rem;
+    }
+
+    #lock-screen p {
+        margin-bottom: 15px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    #lock-screen input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        text-align: center;
+        outline: none;
+    }
+
+    #lock-screen button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: none;
+        background: #ff8fab;
+        color: #fff;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    #lock-screen button:hover {
+        background: #ff6f91;
+    }
 
     /* セクション */
     section {
@@ -54,11 +127,33 @@
 
 <body>
 
-<!-- 背景レイヤー（2枚重ねてクロスフェード） -->
+<!-- 背景レイヤー -->
 <div id="bg1" class="bg-layer"></div>
 <div id="bg2" class="bg-layer"></div>
 
-<!-- ここから本編 -->
+<!-- パスワードロック（旅行っぽいデザイン） -->
+<div id="lock-screen">
+    <div class="lock-box">
+        <div class="plane-icon">✈️</div>
+        <h2>チェックイン</h2>
+        <p>合言葉を入力して旅をはじめよう</p>
+        <input type="text" id="pass" placeholder="さんこいち">
+        <button onclick="unlock()">出発する</button>
+    </div>
+</div>
+
+<script>
+function unlock() {
+    const p = document.getElementById("pass").value.trim();
+    if (p === "さんこいち") {
+        document.getElementById("lock-screen").style.display = "none";
+    } else {
+        alert("合言葉がちがうよ！");
+    }
+}
+</script>
+
+<!-- 本編 -->
 
 <section>
     <h2>旅の概要</h2>
@@ -88,13 +183,13 @@
     </div>
 </section>
 
-<!-- 背景切り替えスクリプト（クロスフェード） -->
+<!-- 背景クロスフェード -->
 <script>
     const backgrounds = [
-        "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')", // 海
-        "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470')", // 山
-        "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee')", // 街
-        "url('https://images.unsplash.com/photo-1500048993959-dc65b0c31f52')"  // 夜景
+        "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')",
+        "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470')",
+        "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee')",
+        "url('https://images.unsplash.com/photo-1500048993959-dc65b0c31f52')"
     ];
 
     const bg1 = document.getElementById("bg1");
