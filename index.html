@@ -9,42 +9,21 @@
     body {
         margin: 0;
         font-family: sans-serif;
-        background-attachment: fixed;
-        background-size: cover;
-        background-position: center;
-        transition: background-image 0.8s ease-in-out;
         color: #fff;
     }
 
-    /* パスワード画面 */
-    #lock-screen {
+    /* 背景レイヤー（クロスフェード用） */
+    .bg-layer {
         position: fixed;
         inset: 0;
-        background: #111;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        transition: opacity 1.2s ease-in-out;
+        z-index: -1;
     }
-    #lock-screen input {
-        padding: 10px;
-        font-size: 18px;
-        border-radius: 8px;
-        border: none;
-        margin-top: 10px;
-        text-align: center;
-    }
-    #lock-screen button {
-        margin-top: 10px;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 8px;
-        border: none;
-        background: #4caf50;
-        color: #fff;
-    }
+    #bg1 { opacity: 1; }
+    #bg2 { opacity: 0; }
 
     /* セクション */
     section {
@@ -73,88 +52,9 @@
 
 <body>
 
-<!-- パスワードロック -->
-<div id="lock-screen">
-    <div class="lock-box">
-        <h2>合言葉を入力してね</h2>
-        <input type="text" id="pass" placeholder="さんこいち">
-        <button onclick="unlock()">OK</button>
-    </div>
-</div>
-
-<style>
-    #lock-screen {
-        position: fixed;
-        inset: 0;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(6px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .lock-box {
-        background: #fff;
-        padding: 30px 25px;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        text-align: center;
-        width: 80%;
-        max-width: 320px;
-        animation: pop 0.4s ease;
-    }
-
-    @keyframes pop {
-        0% { transform: scale(0.8); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    #lock-screen h2 {
-        margin-bottom: 15px;
-        color: #333;
-        font-size: 1.3rem;
-    }
-
-    #lock-screen input {
-        width: 100%;
-        padding: 12px;
-        font-size: 18px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-        text-align: center;
-        outline: none;
-    }
-
-    #lock-screen button {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border-radius: 10px;
-        border: none;
-        background: #ff8fab;
-        color: #fff;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    #lock-screen button:hover {
-        background: #ff6f91;
-    }
-</style>
-
-<script>
-function unlock() {
-    const p = document.getElementById("pass").value.trim();
-    if (p === "さんこいち") {
-        document.getElementById("lock-screen").style.display = "none";
-    } else {
-        alert("ちがうよ！");
-    }
-}
-</script>
-
+<!-- 背景レイヤー（2枚重ねてクロスフェード） -->
+<div id="bg1" class="bg-layer"></div>
+<div id="bg2" class="bg-layer"></div>
 
 <!-- ここから本編 -->
 
@@ -186,7 +86,7 @@ function unlock() {
     </div>
 </section>
 
-<!-- 背景切り替えスクリプト -->
+<!-- 背景切り替えスクリプト（クロスフェード） -->
 <script>
     const backgrounds = [
         "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')", // 海
@@ -195,6 +95,25 @@ function unlock() {
         "url('https://images.unsplash.com/photo-1500048993959-dc65b0c31f52')"  // 夜景
     ];
 
+    const bg1 = document.getElementById("bg1");
+    const bg2 = document.getElementById("bg2");
+
+    let currentIndex = 0;
+    bg1.style.backgroundImage = backgrounds[0];
+
+    function changeBackground(index) {
+        if (index === currentIndex) return;
+
+        bg2.style.backgroundImage = backgrounds[index];
+        bg2.style.opacity = 1;
+
+        setTimeout(() => {
+            bg1.style.backgroundImage = backgrounds[index];
+            bg2.style.opacity = 0;
+            currentIndex = index;
+        }, 1200);
+    }
+
     const sections = document.querySelectorAll("section");
 
     window.addEventListener("scroll", () => {
@@ -202,16 +121,13 @@ function unlock() {
 
         sections.forEach((sec, i) => {
             const rect = sec.getBoundingClientRect();
-            if (rect.top <= window.innerHeight * 0.5) {
+            if (rect.top <= window.innerHeight * 0.4) {
                 index = i;
             }
         });
 
-        document.body.style.backgroundImage = backgrounds[index];
+        changeBackground(index);
     });
-
-    // 初期背景
-    document.body.style.backgroundImage = backgrounds[0];
 </script>
 
 </body>
