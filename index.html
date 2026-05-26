@@ -75,21 +75,86 @@
 
 <!-- パスワードロック -->
 <div id="lock-screen">
-    <h2>パスワードを入力</h2>
-    <input type="password" id="pass" placeholder="ひらがなで入力">
-    <button onclick="unlock()">OK</button>
+    <div class="lock-box">
+        <h2>合言葉を入力してね</h2>
+        <input type="text" id="pass" placeholder="さんこいち">
+        <button onclick="unlock()">OK</button>
+    </div>
 </div>
+
+<style>
+    #lock-screen {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .lock-box {
+        background: #fff;
+        padding: 30px 25px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-align: center;
+        width: 80%;
+        max-width: 320px;
+        animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    #lock-screen h2 {
+        margin-bottom: 15px;
+        color: #333;
+        font-size: 1.3rem;
+    }
+
+    #lock-screen input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        text-align: center;
+        outline: none;
+    }
+
+    #lock-screen button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: none;
+        background: #ff8fab;
+        color: #fff;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    #lock-screen button:hover {
+        background: #ff6f91;
+    }
+</style>
 
 <script>
 function unlock() {
-    const p = document.getElementById("pass").value;
+    const p = document.getElementById("pass").value.trim();
     if (p === "さんこいち") {
         document.getElementById("lock-screen").style.display = "none";
     } else {
-        alert("パスワードが違います");
+        alert("ちがうよ！");
     }
 }
 </script>
+
 
 <!-- ここから本編 -->
 
